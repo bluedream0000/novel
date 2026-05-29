@@ -85,11 +85,19 @@ jobs:
       
       - name: Build APK
         run: |
-          buildozer android debug
+          buildozer android debug 2>&1 | tee build_log.txt
         timeout-minutes: 120
         env:
           BUILDOZER_WARN_ON_ROOT: 0
           ANDROID_HOME: ~/.buildozer/android/platform/android-sdk
+      
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build_log.txt
+          retention-days: 7
       
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
