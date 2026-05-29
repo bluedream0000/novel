@@ -19,8 +19,8 @@ requirements = python3,kivy,requests,beautifulsoup4,lxml,qiniu
 android.api = 31
 # 安卓最小 API
 android.minapi = 21
-# 安卓 NDK 版本
-android.ndk = 23b
+# 安卓 NDK 版本（p4a 要求最低 25，推荐 28c）
+android.ndk = 25c
 # 安卓 SDK 版本
 android.sdk = 31
 # 安卓 Build Tools 版本
