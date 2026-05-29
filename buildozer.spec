@@ -23,6 +23,8 @@ android.minapi = 21
 android.ndk = 25b
 # 安卓 SDK 版本
 android.sdk = 33
+# 安卓 Build Tools 版本（必须指定，否则找不到 aidl）
+android.build_tools = 33.0.0
 # 权限
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_NETWORK_STATE
 # 架构
