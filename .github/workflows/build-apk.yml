@@ -48,27 +48,34 @@ jobs:
       
       - name: Pre-install Android SDK and accept licenses
         run: |
+          SDK_DIR=$HOME/.buildozer/android/platform/android-sdk
+          
           # 创建必要的目录
-          mkdir -p ~/.buildozer/android/platform
+          mkdir -p $SDK_DIR/cmdline-tools
+          mkdir -p $SDK_DIR/tools/bin
+          mkdir -p $SDK_DIR/build-tools/31.0.0
+          mkdir -p $SDK_DIR/platforms/android-31
+          mkdir -p $SDK_DIR/platform-tools
           
           # 下载并安装 Android SDK 命令行工具
-          cd ~/.buildozer/android/platform
-          if [ ! -d "android-sdk" ]; then
-            wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-            unzip -q commandlinetools-linux-8512546_latest.zip
-            mkdir -p android-sdk/cmdline-tools
-            mv cmdline-tools android-sdk/cmdline-tools/latest
-            rm commandlinetools-linux-8512546_latest.zip
-          fi
+          cd /tmp
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+          unzip -q commandlinetools-linux-8512546_latest.zip
+          mv cmdline-tools $SDK_DIR/cmdline-tools/latest
+          rm commandlinetools-linux-8512546_latest.zip
           
-          # 创建旧版 tools/bin 目录结构（buildozer 期望的路径）
-          mkdir -p android-sdk/tools/bin
-          ln -sf ../cmdline-tools/latest/bin/sdkmanager android-sdk/tools/bin/sdkmanager
-          ln -sf ../cmdline-tools/latest/bin/avdmanager android-sdk/tools/bin/avdmanager
+          # 创建旧版 tools/bin/sdkmanager（buildozer 硬编码了这个路径）
+          ln -sf $SDK_DIR/cmdline-tools/latest/bin/sdkmanager $SDK_DIR/tools/bin/sdkmanager
+          ln -sf $SDK_DIR/cmdline-tools/latest/bin/avdmanager $SDK_DIR/tools/bin/avdmanager
+          
+          # 验证符号链接
+          echo "=== Verify sdkmanager ==="
+          ls -la $SDK_DIR/tools/bin/sdkmanager
+          $SDK_DIR/tools/bin/sdkmanager --version
           
           # 设置环境变量
-          export ANDROID_HOME=~/.buildozer/android/platform/android-sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin
+          export ANDROID_HOME=$SDK_DIR
+          export PATH=$PATH:$SDK_DIR/cmdline-tools/latest/bin:$SDK_DIR/tools/bin
           
           # 接受所有许可证
           yes | sdkmanager --licenses || true
