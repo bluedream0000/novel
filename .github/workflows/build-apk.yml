@@ -27,14 +27,8 @@ jobs:
         run: |
           pip install buildozer cython==0.29.36
       
-      - name: Initialize Buildozer (if needed)
-        run: |
-          cd kivy_app
-          if [ ! -f buildozer.spec ]; then buildozer init; fi
-      
       - name: Build Debug APK
         run: |
-          cd kivy_app
           buildozer android debug
         timeout-minutes: 60
       
@@ -42,5 +36,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: novel-reader-debug-apk
-          path: kivy_app/bin/*.apk
+          path: bin/*.apk
           retention-days: 30
