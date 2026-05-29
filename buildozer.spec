@@ -13,8 +13,8 @@ source.include_exts = py,png,jpg,kv,atlas,ttf,db,json
 version = 1.0.0
 # 应用图标
 icon.filename = %(source.dir)s/icon.png
-# 应用要求（先最小化，确保基础打包成功）
-requirements = python3,kivy,requests,beautifulsoup4
+# 应用要求
+requirements = python3,kivy,requests,beautifulsoup4,lxml,qiniu
 # 安卓 API 版本（使用稳定版本）
 android.api = 31
 # 安卓最小 API
