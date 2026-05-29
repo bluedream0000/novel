@@ -13,26 +13,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v5
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
-          python-version: '3.10'
-      
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zip unzip openjdk-17-jdk autoconf automake libtool pkg-config libncurses5-dev libncursesw5-dev libltdl-dev libffi-dev libssl-dev libbz2-dev libreadline-dev libsqlite3-dev libgl1-mesa-dev libx11-dev libxext-dev libxrender-dev libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libpulse-dev cmake git liblzma-dev
-      
-      - name: Install Buildozer
-        run: |
-          pip install buildozer cython==0.29.36
-      
-      - name: Build Debug APK
-        run: |
-          buildozer android debug
-        timeout-minutes: 90
-        env:
-          BUILDOZER_WARN_ON_ROOT: 0
+          command: buildozer android debug
+          buildozer_version: master
       
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
