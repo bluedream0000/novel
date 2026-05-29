@@ -13,8 +13,8 @@ source.include_exts = py,png,jpg,kv,atlas,ttf,db,json
 version = 1.0.0
 # 应用图标
 icon.filename = %(source.dir)s/icon.png
-# 应用要求
-requirements = python3,kivy,sqlite3,requests,beautifulsoup4,lxml,urllib3,certifi,chardet,idna,qiniu
+# 应用要求（sqlite3/urllib3/certifi/chardet/idna 是 requests 的依赖，不需要单独列出）
+requirements = python3,kivy,requests,beautifulsoup4,lxml,qiniu
 # 安卓 API 版本（使用稳定版本）
 android.api = 31
 # 安卓最小 API
@@ -27,8 +27,8 @@ android.sdk = 31
 android.build_tools = 31.0.0
 # 权限
 android.permissions = INTERNET,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_NETWORK_STATE
-# 架构
-android.archs = arm64-v8a, armeabi-v7a
+# 架构（先只编译 arm64-v8a，减少编译问题）
+android.archs = arm64-v8a
 # 屏幕方向
 orientation = portrait
 # 全屏
