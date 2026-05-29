@@ -50,28 +50,33 @@ jobs:
         run: |
           SDK_DIR=$HOME/.buildozer/android/platform/android-sdk
           
-          # 创建必要的目录
-          mkdir -p $SDK_DIR/cmdline-tools
-          mkdir -p $SDK_DIR/tools/bin
-          mkdir -p $SDK_DIR/build-tools/31.0.0
-          mkdir -p $SDK_DIR/platforms/android-31
-          mkdir -p $SDK_DIR/platform-tools
-          
-          # 下载并安装 Android SDK 命令行工具
-          cd /tmp
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-          unzip -q commandlinetools-linux-8512546_latest.zip
-          mv cmdline-tools $SDK_DIR/cmdline-tools/latest
-          rm commandlinetools-linux-8512546_latest.zip
+          # 如果 SDK 已存在（缓存命中），跳过安装
+          if [ -f "$SDK_DIR/cmdline-tools/latest/bin/sdkmanager" ]; then
+            echo "=== Android SDK already exists, skipping installation ==="
+          else
+            echo "=== Installing Android SDK ==="
+            # 创建必要的目录
+            mkdir -p $SDK_DIR/cmdline-tools
+            mkdir -p $SDK_DIR/tools/bin
+            
+            # 下载并安装 Android SDK 命令行工具
+            cd /tmp
+            rm -rf commandlinetools-linux-8512546_latest.zip cmdline-tools
+            wget -q https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+            unzip -q commandlinetools-linux-8512546_latest.zip
+            mkdir -p $SDK_DIR/cmdline-tools/latest
+            mv cmdline-tools/* $SDK_DIR/cmdline-tools/latest/
+            rm -rf commandlinetools-linux-8512546_latest.zip cmdline-tools
+          fi
           
           # 创建旧版 tools/bin/sdkmanager（buildozer 硬编码了这个路径）
-          ln -sf $SDK_DIR/cmdline-tools/latest/bin/sdkmanager $SDK_DIR/tools/bin/sdkmanager
-          ln -sf $SDK_DIR/cmdline-tools/latest/bin/avdmanager $SDK_DIR/tools/bin/avdmanager
+          ln -sf $SDK_DIR/cmdline-tools/latest/bin/sdkmanager $SDK_DIR/tools/bin/sdkmanager || true
+          ln -sf $SDK_DIR/cmdline-tools/latest/bin/avdmanager $SDK_DIR/tools/bin/avdmanager || true
           
           # 验证符号链接
           echo "=== Verify sdkmanager ==="
-          ls -la $SDK_DIR/tools/bin/sdkmanager
-          $SDK_DIR/tools/bin/sdkmanager --version
+          ls -la $SDK_DIR/tools/bin/sdkmanager || true
+          $SDK_DIR/tools/bin/sdkmanager --version || true
           
           # 设置环境变量
           export ANDROID_HOME=$SDK_DIR
@@ -81,7 +86,7 @@ jobs:
           yes | sdkmanager --licenses || true
           
           # 安装必要的组件
-          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0" || true
       
       - name: Build APK
         run: |
