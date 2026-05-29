@@ -13,8 +13,8 @@ source.include_exts = py,png,jpg,kv,atlas,ttf,db,json
 version = 1.0.0
 # 应用图标
 icon.filename = %(source.dir)s/icon.png
-# 应用要求（sqlite3/urllib3/certifi/chardet/idna 是 requests 的依赖，不需要单独列出）
-requirements = python3,kivy,requests,beautifulsoup4,lxml,qiniu
+# 应用要求（先最小化，确保基础打包成功）
+requirements = python3,kivy,requests,beautifulsoup4
 # 安卓 API 版本（使用稳定版本）
 android.api = 31
 # 安卓最小 API
@@ -37,7 +37,7 @@ fullscreen = 0
 services =
 
 [buildozer]
-# 日志级别
+# 日志级别（2=debug，查看详细错误）
 log_level = 2
 # 构建目录
 build_dir = ./.buildozer
