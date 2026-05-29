@@ -61,15 +61,20 @@ jobs:
             rm commandlinetools-linux-8512546_latest.zip
           fi
           
+          # 创建旧版 tools/bin 目录结构（buildozer 期望的路径）
+          mkdir -p android-sdk/tools/bin
+          ln -sf ../cmdline-tools/latest/bin/sdkmanager android-sdk/tools/bin/sdkmanager
+          ln -sf ../cmdline-tools/latest/bin/avdmanager android-sdk/tools/bin/avdmanager
+          
           # 设置环境变量
           export ANDROID_HOME=~/.buildozer/android/platform/android-sdk
-          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin
           
           # 接受所有许可证
           yes | sdkmanager --licenses || true
           
           # 安装必要的组件
-          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0" "ndk;23.2.8568313"
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
       
       - name: Build APK
         run: |
