@@ -113,8 +113,8 @@ jobs:
           BUILDOZER_WARN_ON_ROOT: 0
           ANDROID_HOME: ~/.buildozer/android/platform/android-sdk
       
-      - name: Upload build log on failure
-        if: failure()
+      - name: Upload build log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-log
@@ -136,8 +136,9 @@ jobs:
             cp "$APK_FILE" bin/
             echo "Copied to bin/"
           else
-            echo "ERROR: No APK found anywhere!"
-            exit 1
+            echo "WARNING: No APK found, uploading .buildozer for debug"
+            # 列出 .buildozer 结构
+            find .buildozer -maxdepth 4 -type d 2>/dev/null | head -30
           fi
           
           ls -la bin/
