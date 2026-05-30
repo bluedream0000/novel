@@ -39,7 +39,3 @@ services =
 [buildozer]
 # 日志级别（2=debug，查看详细错误）
 log_level = 2
-# 构建目录
-build_dir = ./.buildozer
-# 打包后 APK 目录
-bin_dir = ./bin

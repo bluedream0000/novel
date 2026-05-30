@@ -91,6 +91,13 @@ jobs:
       - name: Build APK
         run: |
           buildozer android debug 2>&1 | tee build_log.txt
+          # 检查 buildozer 默认输出目录
+          echo "=== Check default bin dir ==="
+          ls -la bin/ 2>/dev/null || echo "bin/ not found"
+          echo "=== Check .buildozer/bin ==="
+          ls -la .buildozer/bin/ 2>/dev/null || echo ".buildozer/bin/ not found"
+          echo "=== Find all APK ==="
+          find /home/runner -name "*.apk" -type f 2>/dev/null
         timeout-minutes: 120
         env:
           BUILDOZER_WARN_ON_ROOT: 0
@@ -107,19 +114,20 @@ jobs:
       - name: Find and copy APK
         run: |
           echo "=== Searching for APK files ==="
-          find . -name "*.apk" -type f 2>/dev/null
+          find /home/runner -name "*.apk" -type f 2>/dev/null
           
           # 创建 bin 目录
           mkdir -p bin
           
           # 查找并复制 APK 到 bin 目录
-          APK_FILE=$(find . -name "*.apk" -type f 2>/dev/null | head -1)
+          APK_FILE=$(find /home/runner -name "*.apk" -type f 2>/dev/null | head -1)
           if [ -n "$APK_FILE" ]; then
             echo "Found APK: $APK_FILE"
             cp "$APK_FILE" bin/
             echo "Copied to bin/"
           else
-            echo "No APK found!"
+            echo "ERROR: No APK found anywhere!"
+            exit 1
           fi
           
           ls -la bin/
