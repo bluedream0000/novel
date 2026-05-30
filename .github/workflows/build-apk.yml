@@ -40,11 +40,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.buildozer
+            ~/.buildozer/android/platform/android-sdk
+            ~/.buildozer/android/platform/android-ndk-r*
             ~/.gradle
-          key: ${{ runner.os }}-buildozer-${{ hashFiles('**/buildozer.spec') }}
+          key: ${{ runner.os }}-buildozer-sdk-${{ hashFiles('**/buildozer.spec') }}
           restore-keys: |
-            ${{ runner.os }}-buildozer-
+            ${{ runner.os }}-buildozer-sdk-
       
       - name: Pre-install Android SDK and accept licenses
         run: |
@@ -90,14 +91,23 @@ jobs:
       
       - name: Build APK
         run: |
+          # 清除之前的构建缓存（避免缓存问题）
+          rm -rf .buildozer/android/app/build
+          rm -rf .buildozer/android/platform/build-*
+          
+          # 运行 buildozer
           buildozer android debug 2>&1 | tee build_log.txt
-          # 检查 buildozer 默认输出目录
-          echo "=== Check default bin dir ==="
+          
+          # 显示构建结果
+          echo "=== Build result ==="
+          echo "=== Check bin/ ==="
           ls -la bin/ 2>/dev/null || echo "bin/ not found"
-          echo "=== Check .buildozer/bin ==="
-          ls -la .buildozer/bin/ 2>/dev/null || echo ".buildozer/bin/ not found"
-          echo "=== Find all APK ==="
-          find /home/runner -name "*.apk" -type f 2>/dev/null
+          echo "=== Check .buildozer/android/app/build/outputs ==="
+          ls -la .buildozer/android/app/build/outputs/apk/debug/ 2>/dev/null || echo "app/build/outputs not found"
+          echo "=== Check platform build ==="
+          find .buildozer/android/platform -name "*.apk" 2>/dev/null || echo "No APK in platform"
+          echo "=== Gradle build log (last 50 lines) ==="
+          tail -50 build_log.txt
         timeout-minutes: 120
         env:
           BUILDOZER_WARN_ON_ROOT: 0
